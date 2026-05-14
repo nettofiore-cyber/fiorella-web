@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tu experiencia — Fiorella Netto</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --gold: #B8975A; --gold-light: #D4B483; --gold-text: #7A5C2E;
+    --gold-alpha-03: rgba(184,151,90,0.3); --gold-alpha-02: rgba(184,151,90,0.2);
+    --gold-alpha-01: rgba(184,151,90,0.12);
+  }
+  body { background:#1a1a1a; font-family:'Gill Sans','Gill Sans MT',Calibri,'Trebuchet MS',sans-serif; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:40px 20px; }
+  .page { background:#FDFBF7; width:100%; max-width:720px; position:relative; overflow:hidden; }
+  .page::before { content:''; position:absolute; inset:12px; border:1px solid var(--gold); pointer-events:none; z-index:10; }
+  .page::after  { content:''; position:absolute; inset:16px; border:1px solid var(--gold-alpha-02); pointer-events:none; z-index:10; }
+  .header { background:#0A0A0A; padding:48px 64px 40px; text-align:center; -webkit-print-color-adjust:exact; }
+  .header-ornament { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:24px; }
+  .ornament-line { flex:1; height:1px; background:linear-gradient(to right,transparent,var(--gold)); max-width:80px; }
+  .ornament-line.right { background:linear-gradient(to left,transparent,var(--gold)); }
+  .ornament-diamond { width:6px; height:6px; background:var(--gold); transform:rotate(45deg); }
+  .brand-name { font-family:Georgia,serif; font-size:11px; letter-spacing:5px; text-transform:uppercase; color:var(--gold); margin-bottom:14px; }
+  .doc-title { font-family:Georgia,serif; font-size:32px; font-weight:normal; color:#F7F5F0; line-height:1.2; }
+  .doc-title em { font-style:italic; color:#E8D5A3; }
+  .doc-subtitle { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:#666; margin-top:10px; }
+  .body { padding:48px 64px; }
+  .section-eyebrow { font-size:8px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:14px; display:flex; align-items:center; gap:12px; }
+  .section-eyebrow::after { content:''; flex:1; height:1px; background:var(--gold); opacity:0.3; }
+  .intro-text { font-family:Georgia,serif; font-size:17px; font-weight:300; line-height:1.8; color:#0A0A0A; margin-bottom:40px; padding-bottom:40px; border-bottom:1px solid #E8E6E1; }
+  .intro-text strong { color:var(--gold-text); }
+  .form-section { margin-bottom:36px; padding-bottom:36px; border-bottom:1px solid #E8E6E1; }
+  .section-title { font-family:Georgia,serif; font-size:20px; color:#0A0A0A; margin-bottom:18px; }
+  .section-title span { color:var(--gold-text); font-style:italic; }
+  .field { margin-bottom:18px; }
+  .field-label { font-size:8px; letter-spacing:2.5px; text-transform:uppercase; color:var(--gold-text); display:block; margin-bottom:8px; }
+  .opt { color:#bbb; font-size:10px; font-style:italic; text-transform:none; letter-spacing:0; font-family:Georgia,serif; }
+  .field-input { font-family:Georgia,serif; font-size:16px; font-style:italic; background:#F7F5F0; border:none; border-bottom:2px solid var(--gold-alpha-03); color:#0A0A0A; padding:10px 6px; outline:none; width:100%; transition:border-color 0.2s; }
+  .field-input:focus { border-bottom-color:var(--gold); }
+  .field-input::placeholder { color:#bbb; }
+  textarea.field-input { border:1px solid var(--gold-alpha-03); border-bottom:2px solid var(--gold-alpha-03); padding:14px; resize:vertical; line-height:1.7; min-height:120px; }
+  textarea.field-input:focus { border-color:var(--gold); }
+  .stars { display:flex; gap:8px; margin-bottom:4px; }
+  .star { font-size:32px; cursor:pointer; color:#ddd; transition:color 0.15s; user-select:none; line-height:1; }
+  .star.active { color:var(--gold); }
+  .btn-enviar { width:100%; margin-top:8px; font-family:'Gill Sans',Calibri,sans-serif; font-size:11px; letter-spacing:3px; text-transform:uppercase; padding:16px 18px; border:2px solid var(--gold); background:transparent; color:var(--gold); cursor:pointer; transition:all 0.2s; opacity:0.4; }
+  .btn-enviar:not(:disabled) { opacity:1; }
+  .btn-enviar:not(:disabled):hover { background:var(--gold-alpha-01); }
+  .btn-enviar:disabled { cursor:not-allowed; }
+  .btn-enviar.enviado { background:var(--gold); color:#0A0A0A; opacity:1; cursor:default; }
+  .hint-enviar { font-family:Georgia,serif; font-size:12px; font-style:italic; color:#aaa; text-align:center; margin-top:10px; line-height:1.5; }
+  .confirmacion-envio { display:none; background:#0A0A0A; padding:32px; text-align:center; margin-top:20px; -webkit-print-color-adjust:exact; }
+  .confirmacion-envio.visible { display:block; }
+  .conf-title { font-family:Georgia,serif; font-size:22px; color:var(--gold); font-style:italic; margin-bottom:8px; }
+  .conf-sub { font-family:Georgia,serif; font-size:15px; color:#888; font-style:italic; line-height:1.6; }
+  .footer { background:#0A0A0A; padding:20px 64px; display:flex; justify-content:space-between; align-items:center; -webkit-print-color-adjust:exact; }
+  .footer-left { font-size:8px; letter-spacing:2px; text-transform:uppercase; color:#444; }
+  .footer-center { display:flex; gap:6px; align-items:center; }
+  .footer-dot { width:3px; height:3px; background:var(--gold); transform:rotate(45deg); opacity:0.5; }
+  .footer-right { font-family:Georgia,serif; font-size:12px; color:var(--gold); font-style:italic; opacity:0.8; }
+  @media(max-width:640px){
+    body{padding:0;}
+    .header{padding:32px 20px 28px;}
+    .body{padding:28px 20px;}
+    .footer{padding:14px 20px;}
+    .doc-title{font-size:26px;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="header-ornament">
+      <div class="ornament-line"></div><div class="ornament-diamond"></div><div class="ornament-line right"></div>
+    </div>
+    <div class="brand-name">Fiorella Netto</div>
+    <div class="doc-title">Tu <em>experiencia</em></div>
+    <div class="doc-subtitle">Compartí cómo te llegó la obra</div>
+  </div>
+  <div class="body">
+    <div class="section-eyebrow">Un momento especial</div>
+    <p class="intro-text">
+      Cada obra que sale de mis manos lleva una historia — y me encanta saber cómo sigue esa historia cuando llega a las tuyas.<br><br>
+      Si tenés ganas de contarme cómo te llegó, dónde cuelga ahora, o lo que sentiste al verla por primera vez, <strong>me haría muy feliz leerlo</strong>. Todo lo que compartás es completamente voluntario.
+    </p>
+    <div class="form-section">
+      <div class="section-eyebrow">I · Sobre vos</div>
+      <div class="section-title">Tus <span>datos</span></div>
+      <div class="field">
+        <label class="field-label">Tu nombre</label>
+        <input class="field-input" id="r_nombre" type="text" placeholder="¿Cómo querés que te llamemos?" oninput="checkForm()">
+      </div>
+      <div class="field">
+        <label class="field-label">¿Dónde está colgada la obra? <span class="opt">(opcional)</span></label>
+        <input class="field-input" id="r_lugar" type="text" placeholder="ej. En el living de mi casa, en la habitación de mi mamá...">
+      </div>
+    </div>
+    <div class="form-section">
+      <div class="section-eyebrow">II · Tu experiencia</div>
+      <div class="section-title">¿Qué <span>sentiste</span>?</div>
+      <div class="field">
+        <label class="field-label">Calificación</label>
+        <div class="stars" id="starsContainer">
+          <span class="star" onclick="setStars(1)">★</span>
+          <span class="star" onclick="setStars(2)">★</span>
+          <span class="star" onclick="setStars(3)">★</span>
+          <span class="star" onclick="setStars(4)">★</span>
+          <span class="star" onclick="setStars(5)">★</span>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Tu reseña <span class="opt">(opcional)</span></label>
+        <textarea class="field-input" id="r_resena" placeholder="Contame lo que quieras — cómo fue el proceso, qué sentiste al recibir la obra, qué significa para vos..."></textarea>
+      </div>
+    </div>
+    <button class="btn-enviar" id="btnEnviar" onclick="enviarResena()" disabled>⬦ &nbsp; Enviar mi experiencia a Fiorella</button>
+    <p class="hint-enviar">Solo necesitás tu nombre y una calificación para enviar. Todo lo demás es opcional.</p>
+    <div class="confirmacion-envio" id="confirmacionEnvio">
+      <div class="conf-title">¡Gracias de corazón!</div>
+      <div class="conf-sub">Tu experiencia quedó registrada.<br>Me hace muy feliz que hayas tomado el tiempo de compartirla.</div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="footer-left">Fiorella Netto · Retratos Realistas</div>
+    <div class="footer-center"><div class="footer-dot"></div><div class="footer-dot"></div><div class="footer-dot"></div></div>
+    <div class="footer-right">Arte que permanece</div>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://yseasztrsecihkaretjj.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_FE-J8FwU28AWWJCcAuAR9w_eTSeP3C1';
+
+  let starsSelected = 0;
+
+  function setStars(n) {
+    starsSelected = n;
+    document.querySelectorAll('.star').forEach((s,i) => s.classList.toggle('active', i < n));
+    checkForm();
+  }
+
+  function checkForm() {
+    const nombre = document.getElementById('r_nombre').value.trim();
+    const btn = document.getElementById('btnEnviar');
+    const listo = nombre.length >= 2 && starsSelected > 0;
+    btn.disabled = !listo;
+    btn.style.opacity = listo ? '1' : '0.4';
+  }
+
+  async function enviarResena() {
+    const nombre = document.getElementById('r_nombre').value.trim();
+    if (!nombre || starsSelected === 0) return;
+
+    const btn = document.getElementById('btnEnviar');
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+
+    const resena = {
+      nombre,
+      lugar: document.getElementById('r_lugar').value.trim() || null,
+      texto: document.getElementById('r_resena').value.trim() || null,
+      estrellas: starsSelected,
+      fecha: new Date().toLocaleDateString('es-AR', { year:'numeric', month:'long', day:'numeric' }),
+      publica: false
+    };
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/resenas`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(resena)
+      });
+
+      if (res.ok || res.status === 201) {
+        btn.classList.add('enviado');
+        btn.textContent = '✓  Experiencia enviada';
+        document.getElementById('r_nombre').disabled = true;
+        document.getElementById('r_lugar').disabled = true;
+        document.getElementById('r_resena').disabled = true;
+        document.getElementById('confirmacionEnvio').classList.add('visible');
+        document.getElementById('confirmacionEnvio').scrollIntoView({ behavior:'smooth', block:'center' });
+      } else {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.textContent = '⬦  Enviar mi experiencia a Fiorella';
+        alert('Hubo un problema al enviar. Por favor intentá de nuevo.');
+      }
+    } catch(e) {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.textContent = '⬦  Enviar mi experiencia a Fiorella';
+      alert('Hubo un problema de conexión. Por favor intentá de nuevo.');
+    }
+  }
+</script>
+</body>
+</html>

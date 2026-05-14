@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel — Fiorella Netto</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --gold:#B8975A; --gold-light:#D4B483; --gold-text:#7A5C2E;
+    --gold-alpha-03:rgba(184,151,90,0.3); --gold-alpha-02:rgba(184,151,90,0.2);
+    --gold-alpha-01:rgba(184,151,90,0.12);
+  }
+  body { background:#111; font-family:'Gill Sans','Gill Sans MT',Calibri,'Trebuchet MS',sans-serif; min-height:100vh; }
+
+  /* LOGIN */
+  #vistaLogin { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px; }
+  .login-box { background:#1a1a1a; border:1px solid var(--gold-alpha-03); padding:48px 40px; width:100%; max-width:380px; text-align:center; }
+  .login-brand { font-family:Georgia,serif; font-size:11px; letter-spacing:5px; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+  .login-title { font-family:Georgia,serif; font-size:26px; color:#F7F5F0; font-style:italic; margin-bottom:6px; }
+  .login-sub { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:#444; margin-bottom:32px; }
+  .login-input { font-family:Georgia,serif; font-size:16px; font-style:italic; background:#111; border:none; border-bottom:2px solid var(--gold-alpha-03); color:#F7F5F0; padding:10px 6px; outline:none; width:100%; margin-bottom:20px; text-align:center; letter-spacing:4px; transition:border-color 0.2s; }
+  .login-input:focus { border-bottom-color:var(--gold); }
+  .login-input::placeholder { letter-spacing:1px; color:#333; font-size:14px; }
+  .btn-login { width:100%; font-family:'Gill Sans',Calibri,sans-serif; font-size:10px; letter-spacing:3px; text-transform:uppercase; padding:14px; border:2px solid var(--gold); background:transparent; color:var(--gold); cursor:pointer; transition:all 0.2s; }
+  .btn-login:hover { background:var(--gold-alpha-01); }
+  .login-error { font-family:Georgia,serif; font-size:13px; color:#c0392b; font-style:italic; margin-top:12px; display:none; }
+
+  /* PANEL */
+  #vistaPanel { display:none; padding:32px 24px; max-width:1000px; margin:0 auto; }
+  .panel-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; padding-bottom:20px; border-bottom:1px solid #222; flex-wrap:wrap; gap:12px; }
+  .panel-title { font-family:Georgia,serif; font-size:28px; color:var(--gold); font-style:italic; }
+  .panel-sub { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:#444; margin-top:4px; }
+  .btn-small { font-family:'Gill Sans',Calibri,sans-serif; font-size:9px; letter-spacing:2px; text-transform:uppercase; padding:8px 16px; border:1px solid #333; background:transparent; color:#666; cursor:pointer; transition:all 0.2s; }
+  .btn-small:hover { border-color:var(--gold); color:var(--gold); }
+
+  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px; }
+  .stat { background:#1a1a1a; border:1px solid var(--gold-alpha-02); padding:20px 24px; }
+  .stat-n { font-family:Georgia,serif; font-size:38px; color:var(--gold); line-height:1; margin-bottom:4px; }
+  .stat-l { font-size:8px; letter-spacing:2px; text-transform:uppercase; color:#555; }
+
+  .filters { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+  .f-btn { font-family:'Gill Sans',Calibri,sans-serif; font-size:9px; letter-spacing:2px; text-transform:uppercase; padding:8px 16px; border:1px solid #333; background:transparent; color:#555; cursor:pointer; transition:all 0.2s; }
+  .f-btn.active { border-color:var(--gold); color:var(--gold); background:var(--gold-alpha-01); }
+
+  .loading { text-align:center; padding:60px; font-family:Georgia,serif; font-size:16px; color:#444; font-style:italic; }
+  .empty { text-align:center; padding:60px; }
+  .empty-t { font-family:Georgia,serif; font-size:20px; color:#333; font-style:italic; margin-bottom:6px; }
+  .empty-s { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:#2a2a2a; }
+
+  .cards { display:flex; flex-direction:column; gap:14px; }
+  .card { background:#1a1a1a; border:1px solid #222; padding:24px 28px; }
+  .card.publica { border-left:3px solid var(--gold); }
+  .card-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; flex-wrap:wrap; gap:10px; }
+  .card-autor { font-family:Georgia,serif; font-size:20px; color:#F7F5F0; font-style:italic; }
+  .card-fecha { font-size:8px; letter-spacing:1.5px; text-transform:uppercase; color:#444; margin-top:2px; }
+  .card-stars { display:flex; gap:3px; }
+  .cs { font-size:16px; color:var(--gold); }
+  .cs.v { color:#2a2a2a; }
+  .badge { font-size:8px; letter-spacing:2px; text-transform:uppercase; padding:4px 10px; background:var(--gold-alpha-01); border:1px solid var(--gold-alpha-03); color:var(--gold); }
+  .card-texto { font-family:Georgia,serif; font-size:15px; color:#777; font-style:italic; line-height:1.7; margin-bottom:12px; }
+  .card-lugar { font-family:Georgia,serif; font-size:13px; color:#444; font-style:italic; margin-bottom:14px; }
+  .card-lugar span { color:var(--gold-text); }
+  .card-actions { display:flex; gap:8px; padding-top:14px; border-top:1px solid #1f1f1f; flex-wrap:wrap; }
+  .act { font-family:'Gill Sans',Calibri,sans-serif; font-size:9px; letter-spacing:2px; text-transform:uppercase; padding:7px 14px; border:1px solid; background:transparent; cursor:pointer; transition:all 0.2s; }
+  .act.pub { border-color:#333; color:#555; }
+  .act.pub:hover, .act.pub.on { border-color:var(--gold); color:var(--gold); background:var(--gold-alpha-01); }
+  .act.del { border-color:#2a2a2a; color:#3a3a3a; }
+  .act.del:hover { border-color:#c0392b; color:#c0392b; }
+
+  @media(max-width:640px){
+    #vistaPanel{padding:16px 12px;}
+    .stats{grid-template-columns:1fr;}
+    .panel-header{flex-direction:column; align-items:flex-start;}
+    .card{padding:16px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="vistaLogin">
+  <div class="login-box">
+    <div class="login-brand">Fiorella Netto</div>
+    <div class="login-title">Panel de reseñas</div>
+    <div class="login-sub">Acceso exclusivo</div>
+    <input class="login-input" id="loginPass" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')login()">
+    <button class="btn-login" onclick="login()">Ingresar al panel</button>
+    <div class="login-error" id="loginError">Contraseña incorrecta</div>
+  </div>
+</div>
+
+<!-- PANEL -->
+<div id="vistaPanel">
+  <div class="panel-header">
+    <div>
+      <div class="panel-title">Panel de reseñas</div>
+      <div class="panel-sub">Fiorella Netto · Administración</div>
+    </div>
+    <button class="btn-small" onclick="logout()">Cerrar sesión</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-n" id="sTotal">—</div><div class="stat-l">Reseñas recibidas</div></div>
+    <div class="stat"><div class="stat-n" id="sPublicas">—</div><div class="stat-l">Marcadas como públicas</div></div>
+    <div class="stat"><div class="stat-n" id="sProm">—</div><div class="stat-l">Calificación promedio</div></div>
+  </div>
+
+  <div class="filters">
+    <button class="f-btn active" onclick="setFiltro('todas',this)">Todas</button>
+    <button class="f-btn" onclick="setFiltro('publicas',this)">Públicas</button>
+    <button class="f-btn" onclick="setFiltro('privadas',this)">Privadas</button>
+  </div>
+
+  <div id="grid" class="cards"><div class="loading">Cargando reseñas...</div></div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://yseasztrsecihkaretjj.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_FE-J8FwU28AWWJCcAuAR9w_eTSeP3C1';
+  const ADMIN_PASS   = 'fiorella2025';
+
+  let filtro = 'todas';
+  let todasResenas = [];
+
+  function login() {
+    if (document.getElementById('loginPass').value === ADMIN_PASS) {
+      document.getElementById('vistaLogin').style.display = 'none';
+      document.getElementById('vistaPanel').style.display = 'block';
+      cargar();
+    } else {
+      document.getElementById('loginError').style.display = 'block';
+      document.getElementById('loginPass').value = '';
+    }
+  }
+
+  function logout() {
+    document.getElementById('vistaPanel').style.display = 'none';
+    document.getElementById('vistaLogin').style.display = 'flex';
+    document.getElementById('loginPass').value = '';
+  }
+
+  async function cargar() {
+    document.getElementById('grid').innerHTML = '<div class="loading">Cargando reseñas...</div>';
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/resenas?order=created_at.desc`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    todasResenas = await res.json();
+    actualizarStats();
+    renderCards();
+  }
+
+  function actualizarStats() {
+    document.getElementById('sTotal').textContent = todasResenas.length;
+    document.getElementById('sPublicas').textContent = todasResenas.filter(r=>r.publica).length;
+    if (todasResenas.length > 0) {
+      const prom = todasResenas.reduce((a,r)=>a+r.estrellas,0)/todasResenas.length;
+      document.getElementById('sProm').textContent = prom.toFixed(1)+' ★';
+    } else { document.getElementById('sProm').textContent = '—'; }
+  }
+
+  function setFiltro(f, btn) {
+    filtro = f;
+    document.querySelectorAll('.f-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCards();
+  }
+
+  function renderCards() {
+    let lista = todasResenas;
+    if (filtro==='publicas') lista = lista.filter(r=>r.publica);
+    if (filtro==='privadas') lista = lista.filter(r=>!r.publica);
+    const grid = document.getElementById('grid');
+    if (lista.length === 0) {
+      grid.innerHTML = `<div class="empty"><div class="empty-t">No hay reseñas aquí todavía</div><div class="empty-s">${filtro==='publicas'?'No marcaste ninguna como pública aún':'Los clientes aún no enviaron experiencias'}</div></div>`;
+      return;
+    }
+    grid.innerHTML = lista.map(r => `
+      <div class="card ${r.publica?'publica':''}" id="card_${r.id}">
+        <div class="card-top">
+          <div>
+            <div class="card-autor">${r.nombre}</div>
+            <div class="card-fecha">${r.fecha || ''}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            ${r.publica ? '<span class="badge">Pública</span>' : ''}
+            <div class="card-stars">${[1,2,3,4,5].map(i=>`<span class="cs ${i<=r.estrellas?'':'v'}">★</span>`).join('')}</div>
+          </div>
+        </div>
+        ${r.texto ? `<div class="card-texto">"${r.texto}"</div>` : ''}
+        ${r.lugar ? `<div class="card-lugar">Colgada en: <span>${r.lugar}</span></div>` : ''}
+        <div class="card-actions">
+          <button class="act pub ${r.publica?'on':''}" onclick="togglePublica(${r.id})">${r.publica?'✓ Pública — quitar':'Marcar como pública'}</button>
+          <button class="act del" onclick="eliminar(${r.id})">Eliminar</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function togglePublica(id) {
+    const r = todasResenas.find(x=>x.id===id);
+    if (!r) return;
+    const nuevoVal = !r.publica;
+    await fetch(`${SUPABASE_URL}/rest/v1/resenas?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type':'application/json', 'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${SUPABASE_KEY}`, 'Prefer':'return=minimal' },
+      body: JSON.stringify({ publica: nuevoVal })
+    });
+    r.publica = nuevoVal;
+    actualizarStats();
+    renderCards();
+  }
+
+  async function eliminar(id) {
+    if (!confirm('¿Eliminar esta reseña? No se puede deshacer.')) return;
+    await fetch(`${SUPABASE_URL}/rest/v1/resenas?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: { 'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${SUPABASE_KEY}` }
+    });
+    todasResenas = todasResenas.filter(r=>r.id!==id);
+    actualizarStats();
+    renderCards();
+  }
+</script>
+</body>
+</html>
