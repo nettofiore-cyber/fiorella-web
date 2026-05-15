@@ -13,8 +13,7 @@
   }
   body { background:#1a1a1a; font-family:'Gill Sans','Gill Sans MT',Calibri,'Trebuchet MS',sans-serif; min-height:100vh; padding:0 0 60px; }
 
-  /* HERO */
-  .hero { background:#0A0A0A; padding:64px 24px 52px; text-align:center; position:relative; overflow:hidden; -webkit-print-color-adjust:exact; }
+  .hero { background:#0A0A0A; padding:64px 24px 52px; text-align:center; position:relative; overflow:hidden; }
   .hero::after { content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(to right,transparent,var(--gold),transparent); }
   .hero-ornament { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:24px; }
   .ornament-line { flex:1; height:1px; background:linear-gradient(to right,transparent,var(--gold)); max-width:100px; }
@@ -22,32 +21,48 @@
   .ornament-diamond { width:6px; height:6px; background:var(--gold); transform:rotate(45deg); }
   .brand { font-family:Georgia,serif; font-size:11px; letter-spacing:5px; text-transform:uppercase; color:var(--gold); margin-bottom:16px; }
   .hero-title { font-family:Georgia,serif; font-size:42px; font-weight:normal; color:#F7F5F0; line-height:1.1; margin-bottom:12px; }
-  .hero-title em { font-style:italic; color:#E8D5A3; }
+  .hero-title em { font-style:italic; color:var(--gold); }
   .hero-sub { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:#555; margin-bottom:32px; }
-  .hero-desc { font-family:Georgia,serif; font-size:18px; color:#888; font-style:italic; line-height:1.7; max-width:500px; margin:0 auto; }
-  .hero-desc strong { color:var(--gold-light); font-style:normal; }
+  .hero-desc { font-family:Georgia,serif; font-size:18px; color:#888; font-style:italic; line-height:1.8; max-width:460px; margin:0 auto; }
+  .hero-desc strong { color:var(--gold); font-style:normal; }
 
-  /* STATS BAR */
-  .stats-bar { background:#111; border-bottom:1px solid #1a1a1a; padding:24px; display:flex; justify-content:center; gap:48px; flex-wrap:wrap; }
-  .stat-item { text-align:center; }
-  .stat-n { font-family:Georgia,serif; font-size:32px; color:var(--gold); line-height:1; margin-bottom:4px; }
-  .stat-l { font-size:8px; letter-spacing:2px; text-transform:uppercase; color:#555; }
+  .stats-bar { background:#111; border-bottom:1px solid #1a1a1a; padding:24px; display:flex; justify-content:center; }
+  .stat-n { font-family:Georgia,serif; font-size:36px; color:var(--gold); line-height:1; margin-bottom:4px; text-align:center; }
+  .stat-l { font-size:8px; letter-spacing:2px; text-transform:uppercase; color:#555; text-align:center; }
 
-  /* GRID DE RESEÑAS */
-  .resenas-wrap { max-width:900px; margin:0 auto; padding:48px 24px 0; }
-  .section-eyebrow { font-size:8px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:32px; display:flex; align-items:center; gap:12px; }
+  .carrusel-wrap { padding:48px 0 0; }
+  .section-eyebrow { font-size:8px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:28px; display:flex; align-items:center; gap:12px; padding:0 24px; max-width:900px; margin-left:auto; margin-right:auto; }
   .section-eyebrow::after { content:''; flex:1; height:1px; background:var(--gold); opacity:0.3; }
 
-  .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-  .card { background:#111; border:1px solid #1f1f1f; border-top:2px solid var(--gold); padding:28px 24px; }
-  .card-stars { display:flex; gap:3px; margin-bottom:14px; }
-  .cs { font-size:14px; color:var(--gold); }
-  .card-texto { font-family:Georgia,serif; font-size:16px; color:#aaa; font-style:italic; line-height:1.7; margin-bottom:16px; }
-  .card-bottom { display:flex; justify-content:space-between; align-items:flex-end; padding-top:14px; border-top:1px solid #1a1a1a; }
-  .card-autor { font-family:Georgia,serif; font-size:15px; color:#F7F5F0; font-style:italic; }
-  .card-lugar { font-size:9px; letter-spacing:1px; text-transform:uppercase; color:#444; margin-top:2px; }
+  .carrusel-container { position:relative; overflow:hidden; padding:0 24px 32px; }
+  .carrusel-track {
+    display:flex; gap:16px;
+    overflow-x:auto; scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none; cursor:grab; padding-bottom:8px;
+  }
+  .carrusel-track::-webkit-scrollbar { display:none; }
+  .carrusel-track.grabbing { cursor:grabbing; }
 
-  /* CTA */
+  .card {
+    background:#111; border:1px solid #1f1f1f; border-top:2px solid var(--gold);
+    padding:28px 24px; flex:0 0 320px; scroll-snap-align:start;
+    display:flex; flex-direction:column; min-height:220px;
+  }
+  .card-stars { display:flex; gap:3px; margin-bottom:14px; }
+  .cs { font-size:15px; color:var(--gold); }
+  .cs.v { color:#2a2a2a; }
+  .card-texto { font-family:Georgia,serif; font-size:15px; color:#aaa; font-style:italic; line-height:1.7; margin-bottom:16px; flex:1; }
+  .card-bottom { padding-top:14px; border-top:1px solid #1a1a1a; }
+  .card-autor { font-family:Georgia,serif; font-size:15px; color:#F7F5F0; font-style:italic; }
+  .card-lugar { font-size:9px; letter-spacing:1px; text-transform:uppercase; color:#444; margin-top:3px; }
+
+  .carrusel-nav { display:flex; justify-content:center; gap:8px; margin-top:8px; padding:0 24px; }
+  .nav-dot { width:5px; height:5px; background:#2a2a2a; transform:rotate(45deg); transition:background 0.2s; cursor:pointer; border:none; padding:0; }
+  .nav-dot.active { background:var(--gold); }
+
+  .swipe-hint { text-align:center; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:#333; margin-top:16px; display:none; }
+
   .cta-section { text-align:center; padding:56px 24px 0; max-width:600px; margin:0 auto; }
   .cta-ornament { display:flex; align-items:center; gap:16px; margin-bottom:28px; }
   .cta-ornament .line { flex:1; height:1px; background:var(--gold); opacity:0.3; }
@@ -58,26 +73,22 @@
   .cta-btn:hover { background:#111; border-color:var(--gold); }
   .cta-btn-text { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); }
 
-  /* Loading / empty */
-  .loading { text-align:center; padding:60px; font-family:Georgia,serif; font-size:18px; color:#333; font-style:italic; grid-column:1/-1; }
-  .empty { text-align:center; padding:60px; grid-column:1/-1; }
-  .empty-t { font-family:Georgia,serif; font-size:20px; color:#333; font-style:italic; }
+  .loading { text-align:center; padding:60px; font-family:Georgia,serif; font-size:18px; color:#333; font-style:italic; }
+  .empty-t { font-family:Georgia,serif; font-size:20px; color:#333; font-style:italic; text-align:center; padding:60px 24px; }
 
-  /* Footer */
-  .footer { background:#0A0A0A; padding:20px 40px; display:flex; justify-content:space-between; align-items:center; margin-top:56px; -webkit-print-color-adjust:exact; }
+  .footer { background:#0A0A0A; padding:20px 40px; display:flex; justify-content:space-between; align-items:center; margin-top:56px; }
   .footer-left { font-size:8px; letter-spacing:2px; text-transform:uppercase; color:#444; }
   .footer-dots { display:flex; gap:6px; align-items:center; }
   .footer-dot { width:3px; height:3px; background:var(--gold); transform:rotate(45deg); opacity:0.5; }
   .footer-right { font-family:Georgia,serif; font-size:12px; color:var(--gold); font-style:italic; opacity:0.8; }
 
   @media(max-width:640px){
-    .hero{padding:48px 20px 40px;}
-    .hero-title{font-size:30px;}
-    .hero-desc{font-size:16px;}
-    .stats-bar{gap:24px;}
-    .grid{grid-template-columns:1fr;}
-    .resenas-wrap{padding:32px 16px 0;}
-    .footer{padding:14px 20px; flex-wrap:wrap; gap:8px;}
+    .hero { padding:48px 20px 40px; }
+    .hero-title { font-size:30px; }
+    .hero-desc { font-size:16px; }
+    .card { flex:0 0 280px; }
+    .swipe-hint { display:block; }
+    .footer { padding:14px 20px; flex-wrap:wrap; gap:8px; }
   }
 </style>
 </head>
@@ -90,20 +101,25 @@
   <div class="brand">Fiorella Netto</div>
   <div class="hero-title">Lo que dicen<br><em>mis clientes</em></div>
   <div class="hero-sub">Experiencias reales · Retratos Realistas</div>
-  <p class="hero-desc">Cada obra lleva una historia. Esto es lo que sintieron quienes confiaron en mí para <strong>transformar un recuerdo en arte</strong>.</p>
+  <p class="hero-desc">Cada obra lleva una historia.<br>Esto es lo que sintieron quienes confiaron en mí para<br><strong>transformar un recuerdo en arte</strong>.</p>
 </div>
 
 <div class="stats-bar" id="statsBar" style="display:none;">
-  <div class="stat-item"><div class="stat-n" id="sTotal">—</div><div class="stat-l">Clientes</div></div>
-  <div class="stat-item"><div class="stat-n" id="sProm">—</div><div class="stat-l">Calificación promedio</div></div>
-  <div class="stat-item"><div class="stat-n" id="s5">—</div><div class="stat-l">Calificaciones 5 estrellas</div></div>
+  <div>
+    <div class="stat-n" id="sProm">—</div>
+    <div class="stat-l">Calificación promedio</div>
+  </div>
 </div>
 
-<div class="resenas-wrap">
+<div class="carrusel-wrap">
   <div class="section-eyebrow">Experiencias compartidas</div>
-  <div class="grid" id="grid">
-    <div class="loading">Cargando experiencias...</div>
+  <div class="carrusel-container">
+    <div class="carrusel-track" id="track">
+      <div class="loading">Cargando experiencias...</div>
+    </div>
   </div>
+  <div class="carrusel-nav" id="nav"></div>
+  <div class="swipe-hint">Deslizá para ver más</div>
 </div>
 
 <div class="cta-section">
@@ -133,39 +149,62 @@
       });
       const data = await res.json();
       renderStats(data);
-      renderCards(data);
+      renderCarrusel(data);
     } catch(e) {
-      document.getElementById('grid').innerHTML = '<div class="empty"><div class="empty-t">No se pudieron cargar las reseñas</div></div>';
+      document.getElementById('track').innerHTML = '<div class="empty-t">No se pudieron cargar las experiencias</div>';
     }
   }
 
   function renderStats(data) {
-    if (data.length === 0) return;
-    document.getElementById('statsBar').style.display = 'flex';
-    document.getElementById('sTotal').textContent = data.length;
+    if (data.length < 2) return;
     const prom = data.reduce((a,r)=>a+r.estrellas,0)/data.length;
     document.getElementById('sProm').textContent = prom.toFixed(1)+' ★';
-    document.getElementById('s5').textContent = data.filter(r=>r.estrellas===5).length;
+    document.getElementById('statsBar').style.display = 'flex';
   }
 
-  function renderCards(data) {
-    const grid = document.getElementById('grid');
+  function renderCarrusel(data) {
+    const track = document.getElementById('track');
+    const nav   = document.getElementById('nav');
+
     if (data.length === 0) {
-      grid.innerHTML = '<div class="empty"><div class="empty-t">Pronto vas a ver las primeras experiencias aquí</div></div>';
+      track.innerHTML = '<div class="empty-t">Pronto vas a ver las primeras experiencias aquí</div>';
       return;
     }
-    grid.innerHTML = data.map(r => `
-      <div class="card">
-        <div class="card-stars">${[1,2,3,4,5].map(i=>`<span class="cs">${i<=r.estrellas?'★':'☆'}</span>`).join('')}</div>
-        ${r.texto ? `<div class="card-texto">"${r.texto}"</div>` : '<div class="card-texto" style="color:#333;font-style:normal;">⬦</div>'}
+
+    track.innerHTML = data.map((r,i) => `
+      <div class="card" data-index="${i}">
+        <div class="card-stars">${[1,2,3,4,5].map(j=>`<span class="cs ${j<=r.estrellas?'':'v'}">${j<=r.estrellas?'★':'☆'}</span>`).join('')}</div>
+        ${r.texto ? `<div class="card-texto">"${r.texto}"</div>` : '<div class="card-texto" style="color:#2a2a2a;">⬦</div>'}
         <div class="card-bottom">
-          <div>
-            <div class="card-autor">${r.nombre}</div>
-            ${r.lugar ? `<div class="card-lugar">${r.lugar}</div>` : ''}
-          </div>
+          <div class="card-autor">${r.nombre}</div>
+          ${r.lugar ? `<div class="card-lugar">${r.lugar}</div>` : ''}
         </div>
       </div>
     `).join('');
+
+    if (data.length > 1) {
+      nav.innerHTML = data.map((_,i) => `<button class="nav-dot ${i===0?'active':''}" onclick="irA(${i})"></button>`).join('');
+    }
+
+    track.addEventListener('scroll', () => {
+      const cards = track.querySelectorAll('.card');
+      if (!cards.length) return;
+      const cardW = cards[0].offsetWidth + 16;
+      const idx = Math.round(track.scrollLeft / cardW);
+      document.querySelectorAll('.nav-dot').forEach((d,i) => d.classList.toggle('active', i===idx));
+    });
+
+    let isDown=false, startX, scrollL;
+    track.addEventListener('mousedown', e => { isDown=true; track.classList.add('grabbing'); startX=e.pageX-track.offsetLeft; scrollL=track.scrollLeft; });
+    track.addEventListener('mouseleave', () => { isDown=false; track.classList.remove('grabbing'); });
+    track.addEventListener('mouseup', () => { isDown=false; track.classList.remove('grabbing'); });
+    track.addEventListener('mousemove', e => { if(!isDown)return; e.preventDefault(); const x=e.pageX-track.offsetLeft; track.scrollLeft=scrollL-(x-startX)*1.2; });
+  }
+
+  function irA(idx) {
+    const track = document.getElementById('track');
+    const cards = track.querySelectorAll('.card');
+    if (cards[idx]) cards[idx].scrollIntoView({ behavior:'smooth', block:'nearest', inline:'start' });
   }
 
   cargar();
