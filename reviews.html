@@ -47,13 +47,18 @@
   .card {
     background:#111; border:1px solid #1f1f1f; border-top:2px solid var(--gold);
     padding:28px 24px; flex:0 0 320px; scroll-snap-align:start;
-    display:flex; flex-direction:column; min-height:220px;
+    display:flex; flex-direction:column; height:280px;
   }
-  .card-stars { display:flex; gap:3px; margin-bottom:14px; }
+  .card-stars { display:flex; gap:3px; margin-bottom:14px; flex-shrink:0; }
   .cs { font-size:15px; color:var(--gold); }
   .cs.v { color:#2a2a2a; }
-  .card-texto { font-family:Georgia,serif; font-size:15px; color:#aaa; font-style:italic; line-height:1.7; margin-bottom:16px; flex:1; }
-  .card-bottom { padding-top:14px; border-top:1px solid #1a1a1a; }
+  .card-texto-wrap { flex:1; overflow:hidden; position:relative; margin-bottom:12px; }
+  .card-texto { font-family:Georgia,serif; font-size:15px; color:#aaa; font-style:italic; line-height:1.7; }
+  .card-texto-wrap.colapsado { -webkit-mask-image:linear-gradient(to bottom, black 60%, transparent 100%); mask-image:linear-gradient(to bottom, black 60%, transparent 100%); }
+  .card-texto-wrap.expandido { overflow:visible; -webkit-mask-image:none; mask-image:none; height:auto; }
+  .btn-leermas { background:none; border:none; font-family:Georgia,serif; font-size:12px; font-style:italic; color:var(--gold); cursor:pointer; padding:0; margin-bottom:8px; flex-shrink:0; text-align:left; }
+  .btn-leermas:hover { opacity:0.7; }
+  .card-bottom { padding-top:10px; border-top:1px solid #1a1a1a; flex-shrink:0; margin-top:auto; }
   .card-autor { font-family:Georgia,serif; font-size:15px; color:#F7F5F0; font-style:italic; }
   .card-lugar { font-size:9px; letter-spacing:1px; text-transform:uppercase; color:#444; margin-top:3px; }
 
@@ -174,7 +179,10 @@
     track.innerHTML = data.map((r,i) => `
       <div class="card" data-index="${i}">
         <div class="card-stars">${[1,2,3,4,5].map(j=>`<span class="cs ${j<=r.estrellas?'':'v'}">${j<=r.estrellas?'★':'☆'}</span>`).join('')}</div>
-        ${r.texto ? `<div class="card-texto">"${r.texto}"</div>` : '<div class="card-texto" style="color:#2a2a2a;">⬦</div>'}
+        <div class="card-texto-wrap colapsado" id="wrap_${i}">
+          ${r.texto ? `<div class="card-texto">"${r.texto}"</div>` : '<div class="card-texto" style="color:#2a2a2a;">⬦</div>'}
+        </div>
+        <button class="btn-leermas" id="btn_${i}" onclick="toggleLeer(${i})" style="display:none;">leer más</button>
         <div class="card-bottom">
           <div class="card-autor">${r.nombre}</div>
           ${r.lugar ? `<div class="card-lugar">${r.lugar}</div>` : ''}
@@ -185,6 +193,17 @@
     if (data.length > 1) {
       nav.innerHTML = data.map((_,i) => `<button class="nav-dot ${i===0?'active':''}" onclick="irA(${i})"></button>`).join('');
     }
+
+    // Detectar cuáles textos son largos y mostrar botón
+    setTimeout(() => {
+      data.forEach((_,i) => {
+        const wrap = document.getElementById('wrap_'+i);
+        const btn  = document.getElementById('btn_'+i);
+        if (wrap && btn && wrap.scrollHeight > wrap.offsetHeight + 10) {
+          btn.style.display = 'block';
+        }
+      });
+    }, 100);
 
     track.addEventListener('scroll', () => {
       const cards = track.querySelectorAll('.card');
@@ -205,6 +224,23 @@
     const track = document.getElementById('track');
     const cards = track.querySelectorAll('.card');
     if (cards[idx]) cards[idx].scrollIntoView({ behavior:'smooth', block:'nearest', inline:'start' });
+  }
+
+  function toggleLeer(i) {
+    const wrap = document.getElementById('wrap_'+i);
+    const btn  = document.getElementById('btn_'+i);
+    const card = wrap.closest('.card');
+    if (wrap.classList.contains('colapsado')) {
+      wrap.classList.remove('colapsado');
+      wrap.classList.add('expandido');
+      card.style.height = 'auto';
+      btn.textContent = 'leer menos';
+    } else {
+      wrap.classList.remove('expandido');
+      wrap.classList.add('colapsado');
+      card.style.height = '280px';
+      btn.textContent = 'leer más';
+    }
   }
 
   cargar();
