@@ -4,144 +4,291 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Experiencias reales — Fiorella Netto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Tenor+Sans&display=swap" rel="stylesheet">
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
   :root {
-    --gold:#B8975A; --gold-light:#D4B483; --gold-text:#7A5C2E;
-    --gold-alpha-03:rgba(184,151,90,0.3); --gold-alpha-02:rgba(184,151,90,0.2);
-    --gold-alpha-01:rgba(184,151,90,0.12);
+    --carbon: #161410;
+    --carbon-mid: #1e1b17;
+    --carbon-light: #2a2621;
+    --bone: #f2ede3;
+    --bone-dim: #c9c0b0;
+    --gold: #C9B27E;
+    --gold-light: #E3D3AC;
+    --gold-dark: #9C8355;
+    --gold-muted: rgba(201,178,126,0.15);
   }
-  body { background:#1a1a1a; font-family:'Gill Sans','Gill Sans MT',Calibri,'Trebuchet MS',sans-serif; min-height:100vh; padding:0 0 60px; }
-
-  .hero { background:#0A0A0A; padding:64px 24px 52px; text-align:center; position:relative; overflow:hidden; }
-  .hero::after { content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(to right,transparent,var(--gold),transparent); }
-  .hero-ornament { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:24px; }
-  .ornament-line { flex:1; height:1px; background:linear-gradient(to right,transparent,var(--gold)); max-width:100px; }
-  .ornament-line.right { background:linear-gradient(to left,transparent,var(--gold)); }
-  .ornament-diamond { width:6px; height:6px; background:var(--gold); transform:rotate(45deg); }
-  .brand { font-family:Georgia,serif; font-size:11px; letter-spacing:5px; text-transform:uppercase; color:var(--gold); margin-bottom:16px; }
-  .hero-title { font-family:Georgia,serif; font-size:42px; font-weight:normal; color:#F7F5F0; line-height:1.1; margin-bottom:12px; }
-  .hero-title em { font-style:italic; color:var(--gold); }
-  .hero-sub { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:#555; margin-bottom:32px; }
-  .hero-desc { font-family:Georgia,serif; font-size:18px; color:#888; font-style:italic; line-height:1.8; max-width:460px; margin:0 auto; }
-  .hero-desc strong { color:var(--gold); font-style:normal; }
-
-  .stats-bar { background:#111; border-bottom:1px solid #1a1a1a; padding:24px; display:flex; justify-content:center; }
-  .stat-n { font-family:Georgia,serif; font-size:36px; color:var(--gold); line-height:1; margin-bottom:4px; text-align:center; }
-  .stat-l { font-size:8px; letter-spacing:2px; text-transform:uppercase; color:#555; text-align:center; }
-
-  .carrusel-wrap { padding:48px 0 0; }
-  .section-eyebrow { font-size:8px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:28px; display:flex; align-items:center; gap:12px; padding:0 24px; max-width:900px; margin-left:auto; margin-right:auto; }
-  .section-eyebrow::after { content:''; flex:1; height:1px; background:var(--gold); opacity:0.3; }
-
-  .carrusel-container { position:relative; overflow:hidden; padding:0 24px 32px; }
-  .carrusel-track {
-    display:flex; gap:16px;
-    overflow-x:auto; scroll-snap-type:x mandatory;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none; cursor:grab; padding-bottom:8px;
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: var(--carbon);
+    color: var(--bone);
+    font-family: 'Tenor Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
   }
-  .carrusel-track::-webkit-scrollbar { display:none; }
-  .carrusel-track.grabbing { cursor:grabbing; }
 
+  /* grano — misma textura que el sitio principal, para que se sienta el mismo material */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.35;
+  }
+
+  h1, h2, h3 { font-family: 'Cormorant Garamond', serif; font-weight: 300; }
+  a { color: inherit; }
+
+  /* HERO */
+  .hero {
+    padding: 6.5rem 1.5rem 4rem;
+    text-align: center;
+    position: relative;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(201,178,126,0.35), transparent);
+  }
+  .hero-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    color: var(--bone-dim);
+    margin-bottom: 2.5rem;
+  }
+  .hero-mark span { color: var(--gold); }
+  .hero-ornament {
+    width: 1px; height: 56px;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+    margin: 0 auto 2rem;
+  }
+  .hero h1 {
+    font-size: clamp(2.4rem, 6vw, 3.8rem);
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+    margin-bottom: 1.6rem;
+  }
+  .hero h1 em { font-style: italic; color: var(--gold); }
+  .hero-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.3rem;
+    color: var(--bone-dim);
+    line-height: 1.75;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .hero-desc strong { font-style: normal; color: var(--gold-light); font-weight: 400; }
+
+  /* STATS */
+  .stats-bar {
+    display: none;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    margin: 0 auto;
+  }
+  .stat { text-align: center; }
+  .stat-n {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 2.6rem;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .stat-l {
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--bone-dim);
+    opacity: 0.75;
+  }
+
+  /* SECTION LABEL — el mismo recurso que usa el sitio principal, usado una sola vez */
+  .section-label {
+    font-family: 'Tenor Sans', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .section-label::before { content: ''; width: 28px; height: 1px; background: var(--gold); display: block; }
+
+  .resenas-wrap { max-width: 920px; margin: 0 auto; padding: 3.5rem 1.5rem 0; }
+
+  /* GRID EN COLUMNAS — evita el look de tarjetas SaaS idénticas, deja que cada testimonio respire su propio alto */
+  .grid {
+    column-count: 2;
+    column-gap: 1.6rem;
+  }
   .card {
-    background:#111; border:1px solid #1f1f1f; border-top:2px solid var(--gold);
-    padding:28px 24px; flex:0 0 320px; scroll-snap-align:start;
-    display:flex; flex-direction:column; height:280px;
+    break-inside: avoid;
+    margin-bottom: 1.6rem;
+    background: var(--carbon-mid);
+    border-top: 1px solid var(--gold-dark);
+    padding: 2.2rem 2rem 1.8rem;
+    position: relative;
   }
-  .card-stars { display:flex; gap:3px; margin-bottom:14px; flex-shrink:0; }
-  .cs { font-size:15px; color:var(--gold); }
-  .cs.v { color:#2a2a2a; }
-  .card-texto-wrap { flex:1; overflow:hidden; position:relative; margin-bottom:12px; }
-  .card-texto { font-family:Georgia,serif; font-size:15px; color:#aaa; font-style:italic; line-height:1.7; }
-  .card-texto-wrap.colapsado { -webkit-mask-image:linear-gradient(to bottom, black 60%, transparent 100%); mask-image:linear-gradient(to bottom, black 60%, transparent 100%); }
-  .card-texto-wrap.expandido { overflow:visible; -webkit-mask-image:none; mask-image:none; height:auto; }
-  .btn-leermas { background:none; border:none; font-family:Georgia,serif; font-size:12px; font-style:italic; color:var(--gold); cursor:pointer; padding:0; margin-bottom:8px; flex-shrink:0; text-align:left; }
-  .btn-leermas:hover { opacity:0.7; }
-  .card-bottom { padding-top:10px; border-top:1px solid #1a1a1a; flex-shrink:0; margin-top:auto; }
-  .card-autor { font-family:Georgia,serif; font-size:15px; color:#F7F5F0; font-style:italic; }
-  .card-lugar { font-size:9px; letter-spacing:1px; text-transform:uppercase; color:#444; margin-top:3px; }
+  .card-quote-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 3.2rem;
+    color: var(--gold);
+    opacity: 0.5;
+    line-height: 0.5;
+    display: block;
+    margin-bottom: 0.6rem;
+  }
+  .card-texto {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.2rem;
+    color: var(--bone);
+    line-height: 1.7;
+    margin-bottom: 1.4rem;
+  }
+  .card-stars { display: flex; gap: 3px; margin-bottom: 1.1rem; }
+  .cs { font-size: 0.85rem; color: var(--gold); }
+  .cs.v { color: var(--carbon-light); }
+  .card-bottom {
+    padding-top: 1rem;
+    border-top: 1px solid rgba(201,178,126,0.12);
+  }
+  .card-autor {
+    font-family: 'Tenor Sans', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    color: var(--bone);
+  }
+  .card-lugar {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--bone-dim);
+    margin-top: 0.25rem;
+  }
 
-  .carrusel-nav { display:flex; justify-content:center; gap:8px; margin-top:8px; padding:0 24px; }
-  .nav-dot { width:5px; height:5px; background:#2a2a2a; transform:rotate(45deg); transition:background 0.2s; cursor:pointer; border:none; padding:0; }
-  .nav-dot.active { background:var(--gold); }
+  /* LOADING / EMPTY — sin spinners genéricos: un compás visual acorde a la marca */
+  .state { text-align: center; padding: 4.5rem 1rem; column-span: all; }
+  .state-t {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.3rem;
+    color: var(--bone-dim);
+  }
+  .state-mark {
+    width: 1px; height: 32px;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+    margin: 0 auto 1.4rem;
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-  .swipe-hint { text-align:center; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:#333; margin-top:16px; display:none; }
+  /* CTA */
+  .cta-section {
+    text-align: center;
+    padding: 5rem 1.5rem 6rem;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .cta-divider {
+    width: 1px; height: 44px;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+    margin: 0 auto 2rem;
+  }
+  .cta-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 1.7rem;
+    line-height: 1.5;
+    margin-bottom: 2.4rem;
+  }
+  .cta-quote em { font-style: italic; color: var(--gold); }
+  .btn-primary {
+    display: inline-block;
+    padding: 1rem 2.8rem;
+    border: 1px solid var(--gold);
+    color: var(--carbon);
+    background: var(--gold);
+    font-family: 'Tenor Sans', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.35s, color 0.35s, letter-spacing 0.35s;
+  }
+  .btn-primary:hover { background: transparent; color: var(--gold); letter-spacing: 0.32em; }
+  .btn-primary:focus-visible { outline: 1px solid var(--gold); outline-offset: 4px; }
 
-  .cta-section { text-align:center; padding:56px 24px 0; max-width:600px; margin:0 auto; }
-  .cta-ornament { display:flex; align-items:center; gap:16px; margin-bottom:28px; }
-  .cta-ornament .line { flex:1; height:1px; background:var(--gold); opacity:0.3; }
-  .cta-ornament .d { width:5px; height:5px; background:var(--gold); transform:rotate(45deg); }
-  .cta-quote { font-family:Georgia,serif; font-size:20px; color:#F7F5F0; font-style:italic; line-height:1.6; margin-bottom:28px; }
-  .cta-quote strong { color:var(--gold); font-style:normal; }
-  .cta-btn { display:inline-block; background:#0A0A0A; padding:18px 44px; text-decoration:none; border:1px solid var(--gold-alpha-03); transition:all 0.2s; }
-  .cta-btn:hover { background:#111; border-color:var(--gold); }
-  .cta-btn-text { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); }
+  /* FOOTER — mismo patrón que fiorella-netto.html */
+  footer {
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    border-top: 1px solid rgba(201,178,126,0.12);
+  }
+  .footer-logo { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .footer-logo span { color: var(--gold); }
+  .footer-tagline { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bone-dim); opacity: 0.6; }
 
-  .loading { text-align:center; padding:60px; font-family:Georgia,serif; font-size:18px; color:#333; font-style:italic; }
-  .empty-t { font-family:Georgia,serif; font-size:20px; color:#333; font-style:italic; text-align:center; padding:60px 24px; }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
 
-  .footer { background:#0A0A0A; padding:20px 40px; display:flex; justify-content:space-between; align-items:center; margin-top:56px; }
-  .footer-left { font-size:8px; letter-spacing:2px; text-transform:uppercase; color:#444; }
-  .footer-dots { display:flex; gap:6px; align-items:center; }
-  .footer-dot { width:3px; height:3px; background:var(--gold); transform:rotate(45deg); opacity:0.5; }
-  .footer-right { font-family:Georgia,serif; font-size:12px; color:var(--gold); font-style:italic; opacity:0.8; }
-
-  @media(max-width:640px){
-    .hero { padding:48px 20px 40px; }
-    .hero-title { font-size:30px; }
-    .hero-desc { font-size:16px; }
-    .card { flex:0 0 280px; }
-    .swipe-hint { display:block; }
-    .footer { padding:14px 20px; flex-wrap:wrap; gap:8px; }
+  @media (max-width: 640px) {
+    .grid { column-count: 1; }
+    .hero { padding: 4.5rem 1.25rem 3rem; }
+    .stats-bar { gap: 2rem; padding: 2.4rem 1.5rem; }
+    .card { padding: 1.8rem 1.5rem 1.5rem; }
   }
 </style>
 </head>
 <body>
 
 <div class="hero">
-  <div class="hero-ornament">
-    <div class="ornament-line"></div><div class="ornament-diamond"></div><div class="ornament-line right"></div>
-  </div>
-  <div class="brand">Fiorella Netto</div>
-  <div class="hero-title">Lo que dicen<br><em>mis clientes</em></div>
-  <div class="hero-sub">Experiencias reales · Retratos Realistas</div>
-  <p class="hero-desc">Cada obra lleva una historia.<br>Esto es lo que sintieron quienes confiaron en mí para<br><strong>transformar un recuerdo en arte</strong>.</p>
+  <div class="hero-mark">Fiorella <span>Netto</span></div>
+  <div class="hero-ornament"></div>
+  <h1>Lo que dicen<br><em>mis clientes</em></h1>
+  <p class="hero-desc">Cada obra lleva una historia. Esto es lo que sintieron quienes confiaron en mí para <strong>transformar un recuerdo en arte</strong>.</p>
 </div>
 
-<div class="stats-bar" id="statsBar" style="display:none;">
-  <div>
-    <div class="stat-n" id="sProm">—</div>
-    <div class="stat-l">Calificación promedio</div>
-  </div>
+<div class="stats-bar" id="statsBar">
+  <div class="stat"><div class="stat-n" id="sProm">—</div><div class="stat-l">Promedio de estrellas</div></div>
 </div>
 
-<div class="carrusel-wrap">
-  <div class="section-eyebrow">Experiencias compartidas</div>
-  <div class="carrusel-container">
-    <div class="carrusel-track" id="track">
-      <div class="loading">Cargando experiencias...</div>
+<div class="resenas-wrap">
+  <div class="section-label">Experiencias compartidas</div>
+  <div class="grid" id="grid">
+    <div class="state">
+      <div class="state-mark"></div>
+      <div class="state-t">Cargando experiencias…</div>
     </div>
   </div>
-  <div class="carrusel-nav" id="nav"></div>
-  <div class="swipe-hint">Deslizá para ver más</div>
 </div>
 
 <div class="cta-section">
-  <div class="cta-ornament">
-    <div class="line"></div><div class="d"></div><div class="d"></div><div class="d"></div><div class="line"></div>
-  </div>
-  <p class="cta-quote">¿Querés que tu historia también quede <strong>plasmada para siempre</strong>?</p>
-  <a class="cta-btn" href="https://wa.me/5491128391113?text=Hola%20Fiorella%2C%20vi%20tus%20reseñas%20y%20me%20gustaría%20encargar%20un%20retrato" target="_blank">
-    <div class="cta-btn-text">Consultame por WhatsApp</div>
-  </a>
+  <div class="cta-divider"></div>
+  <p class="cta-quote">¿Querés que tu historia también quede <em>plasmada para siempre</em>?</p>
+  <a class="btn-primary" href="https://wa.me/5491128391113?text=Hola%20Fiorella%2C%20vi%20tus%20reseñas%20y%20me%20gustaría%20encargar%20un%20retrato" target="_blank">Consultame por WhatsApp</a>
 </div>
 
-<div class="footer">
-  <div class="footer-left">Fiorella Netto · Retratos Realistas</div>
-  <div class="footer-dots"><div class="footer-dot"></div><div class="footer-dot"></div><div class="footer-dot"></div></div>
-  <div class="footer-right">Arte que permanece</div>
-</div>
+<footer>
+  <div class="footer-logo">Fiorella <span>Netto</span></div>
+  <div class="footer-tagline">Arte en Grafito &amp; Carboncillo · Arte que permanece</div>
+</footer>
 
 <script>
   const SUPABASE_URL = 'https://yseasztrsecihkaretjj.supabase.co';
@@ -154,93 +301,42 @@
       });
       const data = await res.json();
       renderStats(data);
-      renderCarrusel(data);
-    } catch(e) {
-      document.getElementById('track').innerHTML = '<div class="empty-t">No se pudieron cargar las experiencias</div>';
+      renderCards(data);
+    } catch (e) {
+      document.getElementById('grid').innerHTML = '<div class="state"><div class="state-t">No se pudieron cargar las reseñas en este momento</div></div>';
     }
   }
 
   function renderStats(data) {
-    if (data.length < 2) return;
-    const prom = data.reduce((a,r)=>a+r.estrellas,0)/data.length;
-    document.getElementById('sProm').textContent = prom.toFixed(1)+' ★';
+    if (!data.length) return;
     document.getElementById('statsBar').style.display = 'flex';
+    const prom = data.reduce((a, r) => a + r.estrellas, 0) / data.length;
+    document.getElementById('sProm').textContent = prom.toFixed(1);
   }
 
-  function renderCarrusel(data) {
-    const track = document.getElementById('track');
-    const nav   = document.getElementById('nav');
-
-    if (data.length === 0) {
-      track.innerHTML = '<div class="empty-t">Pronto vas a ver las primeras experiencias aquí</div>';
+  function renderCards(data) {
+    const grid = document.getElementById('grid');
+    if (!data.length) {
+      grid.innerHTML = '<div class="state"><div class="state-t">Pronto vas a ver las primeras experiencias aquí</div></div>';
       return;
     }
-
-    track.innerHTML = data.map((r,i) => `
-      <div class="card" data-index="${i}">
-        <div class="card-stars">${[1,2,3,4,5].map(j=>`<span class="cs ${j<=r.estrellas?'':'v'}">${j<=r.estrellas?'★':'☆'}</span>`).join('')}</div>
-        <div class="card-texto-wrap colapsado" id="wrap_${i}">
-          ${r.texto ? `<div class="card-texto">"${r.texto}"</div>` : '<div class="card-texto" style="color:#2a2a2a;">⬦</div>'}
-        </div>
-        <button class="btn-leermas" id="btn_${i}" onclick="toggleLeer(${i})" style="display:none;">leer más</button>
+    grid.innerHTML = data.map(r => `
+      <div class="card">
+        <span class="card-quote-mark">&ldquo;</span>
+        <div class="card-stars">${[1,2,3,4,5].map(i => `<span class="cs ${i<=r.estrellas?'':'v'}">★</span>`).join('')}</div>
+        ${r.texto ? `<div class="card-texto">${escapeHtml(r.texto)}</div>` : ''}
         <div class="card-bottom">
-          <div class="card-autor">${r.nombre}</div>
-          ${r.lugar ? `<div class="card-lugar">${r.lugar}</div>` : ''}
+          <div class="card-autor">${escapeHtml(r.nombre)}</div>
+          ${r.lugar ? `<div class="card-lugar">${escapeHtml(r.lugar)}</div>` : ''}
         </div>
       </div>
     `).join('');
-
-    if (data.length > 1) {
-      nav.innerHTML = data.map((_,i) => `<button class="nav-dot ${i===0?'active':''}" onclick="irA(${i})"></button>`).join('');
-    }
-
-    // Detectar cuáles textos son largos y mostrar botón
-    setTimeout(() => {
-      data.forEach((_,i) => {
-        const wrap = document.getElementById('wrap_'+i);
-        const btn  = document.getElementById('btn_'+i);
-        if (wrap && btn && wrap.scrollHeight > wrap.offsetHeight + 10) {
-          btn.style.display = 'block';
-        }
-      });
-    }, 100);
-
-    track.addEventListener('scroll', () => {
-      const cards = track.querySelectorAll('.card');
-      if (!cards.length) return;
-      const cardW = cards[0].offsetWidth + 16;
-      const idx = Math.round(track.scrollLeft / cardW);
-      document.querySelectorAll('.nav-dot').forEach((d,i) => d.classList.toggle('active', i===idx));
-    });
-
-    let isDown=false, startX, scrollL;
-    track.addEventListener('mousedown', e => { isDown=true; track.classList.add('grabbing'); startX=e.pageX-track.offsetLeft; scrollL=track.scrollLeft; });
-    track.addEventListener('mouseleave', () => { isDown=false; track.classList.remove('grabbing'); });
-    track.addEventListener('mouseup', () => { isDown=false; track.classList.remove('grabbing'); });
-    track.addEventListener('mousemove', e => { if(!isDown)return; e.preventDefault(); const x=e.pageX-track.offsetLeft; track.scrollLeft=scrollL-(x-startX)*1.2; });
   }
 
-  function irA(idx) {
-    const track = document.getElementById('track');
-    const cards = track.querySelectorAll('.card');
-    if (cards[idx]) cards[idx].scrollIntoView({ behavior:'smooth', block:'nearest', inline:'start' });
-  }
-
-  function toggleLeer(i) {
-    const wrap = document.getElementById('wrap_'+i);
-    const btn  = document.getElementById('btn_'+i);
-    const card = wrap.closest('.card');
-    if (wrap.classList.contains('colapsado')) {
-      wrap.classList.remove('colapsado');
-      wrap.classList.add('expandido');
-      card.style.height = 'auto';
-      btn.textContent = 'leer menos';
-    } else {
-      wrap.classList.remove('expandido');
-      wrap.classList.add('colapsado');
-      card.style.height = '280px';
-      btn.textContent = 'leer más';
-    }
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
   }
 
   cargar();
