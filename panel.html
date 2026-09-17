@@ -67,6 +67,16 @@
   .act.pub:hover, .act.pub.on { border-color:var(--gold); color:var(--gold); background:var(--gold-alpha-01); }
   .act.del { border-color:#2a2a2a; color:#3a3a3a; }
   .act.del:hover { border-color:#c0392b; color:#c0392b; }
+  .act.foto { border-color:#333; color:#555; }
+  .act.foto:hover { border-color:var(--gold-light); color:var(--gold-light); }
+  .act:disabled { opacity:0.5; cursor:wait; }
+  /* --- Fotos en el panel --- */
+  .card-fotos { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+  .pf { position:relative; width:104px; height:104px; overflow:hidden; border:1px solid var(--gold-alpha-02); }
+  .pf img { width:100%; height:100%; object-fit:cover; display:block; }
+  .pf-x { position:absolute; top:4px; right:4px; width:20px; height:20px; border:none; background:rgba(10,10,10,0.78); color:#aaa; font-size:11px; line-height:1; cursor:pointer; padding:0; }
+  .pf-x:hover { color:#c0392b; background:#0A0A0A; }
+  .sin-foto { font-family:Georgia,serif; font-size:12px; font-style:italic; color:#333; margin-bottom:12px; }
 
   @media(max-width:640px){
     #vistaPanel{padding:16px 12px;}
@@ -119,6 +129,8 @@
   const SUPABASE_URL = 'https://yseasztrsecihkaretjj.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_FE-J8FwU28AWWJCcAuAR9w_eTSeP3C1';
   const ADMIN_PASS   = 'fiorella2025';
+  const BUCKET       = 'resenas-fotos';
+  const MAX_FOTOS    = 3;
 
   let filtro = 'todas';
   let todasResenas = [];
@@ -189,12 +201,89 @@
         </div>
         ${r.texto ? `<div class="card-texto">"${r.texto}"</div>` : ''}
         ${r.lugar ? `<div class="card-lugar">Colgada en: <span>${r.lugar}</span></div>` : ''}
+        ${(r.fotos && r.fotos.length)
+          ? `<div class="card-fotos">${r.fotos.map((u,i)=>`
+              <div class="pf">
+                <img src="${u}" alt="" loading="lazy">
+                <button class="pf-x" onclick="quitarFotoResena(${r.id},${i})" title="Quitar imagen">✕</button>
+              </div>`).join('')}</div>`
+          : '<div class="sin-foto">Sin imágenes todavía</div>'}
         <div class="card-actions">
           <button class="act pub ${r.publica?'on':''}" onclick="togglePublica(${r.id})">${r.publica?'✓ Pública — quitar':'Marcar como pública'}</button>
+          <button class="act foto" id="bf_${r.id}" onclick="document.getElementById('inp_${r.id}').click()">Agregar imagen</button>
+          <input type="file" id="inp_${r.id}" accept="image/*" multiple style="display:none" onchange="subirFotosResena(${r.id}, this.files)">
           <button class="act del" onclick="eliminar(${r.id})">Eliminar</button>
         </div>
       </div>
     `).join('');
+  }
+
+  /* --- Fotos: subir desde el panel (sirve para las reseñas viejas) --- */
+  function comprimir(file, maxLado = 1600, calidad = 0.82) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const objUrl = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(objUrl);
+        let w = img.naturalWidth, h = img.naturalHeight;
+        const mayor = Math.max(w, h);
+        if (mayor > maxLado) { const f = maxLado / mayor; w = Math.round(w * f); h = Math.round(h * f); }
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        c.toBlob(b => b ? resolve(b) : reject(new Error('No se pudo procesar')), 'image/jpeg', calidad);
+      };
+      img.onerror = () => { URL.revokeObjectURL(objUrl); reject(new Error('Imagen inválida')); };
+      img.src = objUrl;
+    });
+  }
+
+  async function guardarFotos(id, urls) {
+    await fetch(`${SUPABASE_URL}/rest/v1/resenas?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type':'application/json', 'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${SUPABASE_KEY}`, 'Prefer':'return=minimal' },
+      body: JSON.stringify({ fotos: urls })
+    });
+    const r = todasResenas.find(x => x.id === id);
+    if (r) r.fotos = urls;
+    renderCards();
+  }
+
+  async function subirFotosResena(id, fileList) {
+    const r = todasResenas.find(x => x.id === id);
+    if (!r) return;
+    const archivos = Array.from(fileList || []).filter(f => f.type.startsWith('image/'));
+    if (!archivos.length) return;
+
+    const btn = document.getElementById('bf_' + id);
+    if (btn) { btn.disabled = true; btn.textContent = 'Subiendo...'; }
+
+    const actuales = Array.isArray(r.fotos) ? r.fotos.slice() : [];
+    for (const f of archivos) {
+      if (actuales.length >= MAX_FOTOS) break;
+      try {
+        const blob = await comprimir(f);
+        const nombreArch = `${Date.now()}_${Math.random().toString(36).slice(2,8)}.jpg`;
+        const res = await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${nombreArch}`, {
+          method: 'POST',
+          headers: { 'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${SUPABASE_KEY}`, 'Content-Type':'image/jpeg' },
+          body: blob
+        });
+        if (res.ok) actuales.push(`${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${nombreArch}`);
+      } catch(e) { /* se ignora la que falle */ }
+    }
+    await guardarFotos(id, actuales);
+  }
+
+  async function quitarFotoResena(id, i) {
+    const r = todasResenas.find(x => x.id === id);
+    if (!r || !Array.isArray(r.fotos)) return;
+    if (!confirm('¿Quitar esta imagen de la reseña?')) return;
+    const nuevas = r.fotos.slice();
+    nuevas.splice(i, 1);
+    await guardarFotos(id, nuevas);
   }
 
   async function togglePublica(id) {
