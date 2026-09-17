@@ -134,7 +134,7 @@
   /* CARRUSEL — reemplaza el grid en columnas: en el celu se desliza como carrusel real,
      y todas las tarjetas comparten la misma altura sin importar cuánto texto tengan */
   .reviews-swiper-wrapper-outer { position: relative; padding: 0 1.5rem 3.5rem; }
-  .reviews-swiper { width: 100%; padding: 4px 4px 8px; }
+  .reviews-swiper { width: 100%; padding: 4px 4px 2.6rem; }
   .reviews-swiper .swiper-slide { height: auto; display: flex; }
 
   .card {
@@ -203,13 +203,14 @@
   /* Navegación / paginación Swiper con la estética de la marca */
   .reviews-swiper-wrapper-outer .swiper-button-next,
   .reviews-swiper-wrapper-outer .swiper-button-prev {
-    color: var(--gold); width: 32px; height: 32px; margin-top: -28px;
+    color: var(--gold); width: 32px; height: 32px; margin-top: -45px;
     background: var(--carbon-mid); border: 1px solid var(--gold-muted);
   }
   .reviews-swiper-wrapper-outer .swiper-button-next::after,
   .reviews-swiper-wrapper-outer .swiper-button-prev::after { font-size: 13px; }
   .reviews-swiper-wrapper-outer .swiper-pagination-bullet { background: var(--gold-muted); opacity: 1; }
   .reviews-swiper-wrapper-outer .swiper-pagination-bullet-active { background: var(--gold); }
+  .reviews-swiper-wrapper-outer .swiper-pagination { bottom: 0 !important; }
   @media (max-width: 640px) {
     .reviews-swiper-wrapper-outer .swiper-button-next,
     .reviews-swiper-wrapper-outer .swiper-button-prev { display: none; }
