@@ -133,10 +133,9 @@
 
   /* CARRUSEL — reemplaza el grid en columnas: en el celu se desliza como carrusel real,
      y todas las tarjetas comparten la misma altura sin importar cuánto texto tengan */
-  .reviews-swiper-wrapper-outer { position: relative; padding: 0 1.5rem 1.25rem; }
-  .reviews-swiper { width: 100%; padding: 4px 4px 2.25rem; }
+  .reviews-swiper-wrapper-outer { position: relative; padding: 0 1.5rem 3.5rem; }
+  .reviews-swiper { width: 100%; padding: 4px 4px 8px; }
   .reviews-swiper .swiper-slide { height: auto; display: flex; }
-  .reviews-swiper .swiper-pagination { position: static; margin-top: 1.1rem; }
 
   .card {
     background: var(--carbon-mid);
@@ -299,6 +298,37 @@
     -webkit-line-clamp: unset; overflow: visible; font-size: 1.3rem; margin-bottom: 1.6rem;
   }
 
+  /* FOTOS DE LAS OBRAS EN CASA — tira compacta, no rompe la altura fija de la tarjeta */
+  .card.con-fotos .card-texto { -webkit-line-clamp: 3; }
+  .card-fotos { display: flex; gap: 6px; margin-bottom: 1.1rem; }
+  .card-fotos figure {
+    width: 68px; height: 68px; flex: none;
+    overflow: hidden;
+    background: var(--carbon-light);
+    border: 1px solid rgba(201,178,126,0.14);
+    cursor: pointer;
+  }
+  .card-fotos img { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.35s; }
+  .card-fotos figure:hover img { opacity: 0.78; }
+  .card-fotos .mas {
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 0.95rem; color: var(--gold); cursor: pointer;
+    width: 40px; height: 68px; flex: none;
+  }
+
+  /* Fotos dentro del modal */
+  .modal-fotos { display: grid; gap: 8px; margin-bottom: 1.6rem; }
+  .modal-fotos img {
+    width: 100%; display: block;
+    border: 1px solid rgba(201,178,126,0.14);
+    background: var(--carbon-light);
+  }
+  .foto-credito {
+    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--bone-dim); opacity: 0.6; margin: -1rem 0 1.6rem;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
   }
@@ -307,6 +337,9 @@
     .hero { padding: 4.5rem 1.25rem 3rem; }
     .stats-bar { gap: 2rem; padding: 2.4rem 1.5rem; }
     .card { padding: 1.8rem 1.5rem 1.5rem; height: 340px; }
+    .card-fotos figure { width: 60px; height: 60px; }
+    .card-fotos .mas { height: 60px; width: 34px; }
+    .card.con-fotos .card-texto { -webkit-line-clamp: 2; }
   }
 </style>
 </head>
@@ -357,6 +390,8 @@
     <span class="card-quote-mark">&ldquo;</span>
     <div class="card-stars" id="modalStars"></div>
     <div class="card-texto" id="modalTexto"></div>
+    <div class="modal-fotos" id="modalFotos"></div>
+    <div class="foto-credito" id="modalFotoCredito" style="display:none;"></div>
     <div class="card-bottom">
       <div class="card-autor" id="modalAutor"></div>
       <div class="card-lugar" id="modalLugar"></div>
@@ -408,14 +443,20 @@
     const wrapper = document.getElementById('swiperWrapper');
     wrapper.innerHTML = data.map((r, i) => {
       const texto = r.texto ? r.texto : '';
+      const fotos = fotosDe(r);
       const necesitaVerMas = texto.length > VERMAS_UMBRAL;
       return `
         <div class="swiper-slide">
-          <div class="card">
+          <div class="card${fotos.length ? ' con-fotos' : ''}">
             <span class="card-quote-mark">&ldquo;</span>
             <div class="card-stars">${starsHtml(r.estrellas)}</div>
             ${texto ? `<div class="card-texto">${escapeHtml(texto)}</div>` : ''}
             ${necesitaVerMas ? `<button class="card-vermas" onclick="openModal(${i})">Ver más</button>` : ''}
+            ${fotos.length ? `
+              <div class="card-fotos">
+                ${fotos.slice(0,3).map(u => `<figure onclick="openModal(${i})"><img src="${u}" alt="Obra en casa de ${escapeHtml(r.nombre)}" loading="lazy"></figure>`).join('')}
+                ${fotos.length > 3 ? `<div class="mas" onclick="openModal(${i})">+${fotos.length - 3}</div>` : ''}
+              </div>` : ''}
             <div class="card-bottom">
               <div class="card-autor">${escapeHtml(r.nombre)}</div>
               ${r.lugar ? `<div class="card-lugar">${escapeHtml(r.lugar)}</div>` : ''}
@@ -444,18 +485,38 @@
     });
   }
 
+  function fotosDe(r) {
+    return Array.isArray(r.fotos) ? r.fotos.filter(Boolean) : [];
+  }
+
   function openModal(i) {
     const r = reviewsData[i];
     document.getElementById('modalStars').innerHTML = starsHtml(r.estrellas);
     document.getElementById('modalTexto').textContent = r.texto || '';
     document.getElementById('modalAutor').textContent = r.nombre;
     document.getElementById('modalLugar').textContent = r.lugar || '';
+
+    const fotos = fotosDe(r);
+    const cont = document.getElementById('modalFotos');
+    const credito = document.getElementById('modalFotoCredito');
+    cont.innerHTML = fotos.map(u => `<img src="${u}" alt="Obra en casa de ${escapeHtml(r.nombre)}" loading="lazy">`).join('');
+    if (fotos.length) {
+      credito.textContent = `Foto enviada por ${r.nombre}`;
+      credito.style.display = 'block';
+    } else {
+      credito.style.display = 'none';
+    }
+
     document.getElementById('modalOverlay').classList.add('visible');
+    document.body.style.overflow = 'hidden';
   }
 
   function closeModal() {
     document.getElementById('modalOverlay').classList.remove('visible');
+    document.body.style.overflow = '';
   }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
   function escapeHtml(str) {
     const div = document.createElement('div');
