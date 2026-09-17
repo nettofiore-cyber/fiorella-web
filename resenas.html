@@ -43,6 +43,21 @@
   .stars { display:flex; gap:8px; margin-bottom:4px; }
   .star { font-size:32px; cursor:pointer; color:#ddd; transition:color 0.15s; user-select:none; line-height:1; }
   .star.active { color:var(--gold); }
+  /* --- Fotos (opcional) --- */
+  .foto-drop { border:1px dashed var(--gold-alpha-03); background:#F7F5F0; padding:20px 16px; text-align:center; cursor:pointer; transition:border-color 0.2s, background 0.2s; }
+  .foto-drop:hover { border-color:var(--gold); background:#FDFBF7; }
+  .foto-drop-d { width:6px; height:6px; background:var(--gold); transform:rotate(45deg); margin:0 auto 10px; opacity:0.6; }
+  .foto-drop-t { font-family:Georgia,serif; font-size:15px; font-style:italic; color:var(--gold-text); }
+  .foto-drop-s { font-size:8px; letter-spacing:2px; text-transform:uppercase; color:#bbb; margin-top:6px; }
+  .foto-drop.lleno { border-style:solid; }
+  .fotos-prev { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+  .foto-item { position:relative; width:92px; height:92px; overflow:hidden; border:1px solid var(--gold-alpha-03); }
+  .foto-item img { width:100%; height:100%; object-fit:cover; display:block; }
+  .foto-x { position:absolute; top:3px; right:3px; width:20px; height:20px; border:none; background:rgba(10,10,10,0.72); color:#FDFBF7; font-size:12px; line-height:1; cursor:pointer; padding:0; }
+  .foto-x:hover { background:#0A0A0A; }
+  .video-nota { margin-top:22px; padding-top:18px; border-top:1px solid #E8E6E1; font-family:Georgia,serif; font-size:14px; font-style:italic; color:#999; line-height:1.7; }
+  .video-nota a { color:var(--gold-text); text-decoration:none; border-bottom:1px solid var(--gold-alpha-03); }
+  .video-nota a:hover { border-bottom-color:var(--gold); }
   .btn-enviar { width:100%; margin-top:8px; font-family:'Gill Sans',Calibri,sans-serif; font-size:11px; letter-spacing:3px; text-transform:uppercase; padding:16px 18px; border:2px solid var(--gold); background:transparent; color:var(--gold); cursor:pointer; transition:all 0.2s; opacity:0.4; }
   .btn-enviar:not(:disabled) { opacity:1; }
   .btn-enviar:not(:disabled):hover { background:var(--gold-alpha-01); }
@@ -112,6 +127,17 @@
         <label class="field-label">Tu reseña <span class="opt">(opcional)</span></label>
         <textarea class="field-input" id="r_resena" placeholder="Contame lo que quieras — cómo fue el proceso, qué sentiste al recibir la obra, qué significa para vos..."></textarea>
       </div>
+      <div class="field">
+        <label class="field-label">Una foto de la obra <span class="opt">(opcional)</span></label>
+        <div class="foto-drop" id="fotoDrop" onclick="document.getElementById('r_fotos').click()">
+          <div class="foto-drop-d"></div>
+          <div class="foto-drop-t" id="fotoDropT">Si tenés una foto de la obra ya colgada, sumala acá</div>
+          <div class="foto-drop-s">Hasta 3 imágenes · Tocá para elegir</div>
+        </div>
+        <input type="file" id="r_fotos" accept="image/*" multiple style="display:none" onchange="agregarFotos(this.files)">
+        <div class="fotos-prev" id="fotosPrev"></div>
+      </div>
+      <p class="video-nota">¿Grabaste el momento de abrirla? Me encantaría verlo — podés mandármelo por <a href="https://wa.me/5491128391113?text=Hola%20Fiorella%2C%20te%20mando%20el%20video%20de%20cuando%20recib%C3%AD%20la%20obra" target="_blank">WhatsApp</a>.</p>
     </div>
     <button class="btn-enviar" id="btnEnviar" onclick="enviarResena()" disabled>⬦ &nbsp; Enviar mi experiencia a Fiorella</button>
     <p class="hint-enviar">Solo necesitás tu nombre y una calificación para enviar. Todo lo demás es opcional.</p>
@@ -131,7 +157,86 @@
   const SUPABASE_URL = 'https://yseasztrsecihkaretjj.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_FE-J8FwU28AWWJCcAuAR9w_eTSeP3C1';
 
+  const BUCKET = 'resenas-fotos';
+  const MAX_FOTOS = 3;
+
   let starsSelected = 0;
+  let fotos = []; // { blob, url }
+
+  /* Redimensiona y comprime en el navegador antes de subir */
+  function comprimir(file, maxLado = 1600, calidad = 0.82) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const objUrl = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(objUrl);
+        let w = img.naturalWidth, h = img.naturalHeight;
+        const mayor = Math.max(w, h);
+        if (mayor > maxLado) { const f = maxLado / mayor; w = Math.round(w * f); h = Math.round(h * f); }
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        c.toBlob(b => b ? resolve(b) : reject(new Error('No se pudo procesar')), 'image/jpeg', calidad);
+      };
+      img.onerror = () => { URL.revokeObjectURL(objUrl); reject(new Error('Imagen inválida')); };
+      img.src = objUrl;
+    });
+  }
+
+  async function agregarFotos(fileList) {
+    const archivos = Array.from(fileList || []).filter(f => f.type.startsWith('image/'));
+    for (const f of archivos) {
+      if (fotos.length >= MAX_FOTOS) break;
+      try {
+        const blob = await comprimir(f);
+        fotos.push({ blob, url: URL.createObjectURL(blob) });
+      } catch (e) { /* se ignora la imagen que falle */ }
+    }
+    document.getElementById('r_fotos').value = '';
+    renderFotos();
+  }
+
+  function quitarFoto(i) {
+    URL.revokeObjectURL(fotos[i].url);
+    fotos.splice(i, 1);
+    renderFotos();
+  }
+
+  function renderFotos() {
+    const prev = document.getElementById('fotosPrev');
+    prev.innerHTML = fotos.map((f, i) => `
+      <div class="foto-item">
+        <img src="${f.url}" alt="">
+        <button class="foto-x" type="button" onclick="quitarFoto(${i})" title="Quitar">✕</button>
+      </div>`).join('');
+    const drop = document.getElementById('fotoDrop');
+    const t = document.getElementById('fotoDropT');
+    if (fotos.length === 0) {
+      drop.classList.remove('lleno');
+      t.textContent = 'Si tenés una foto de la obra ya colgada, sumala acá';
+    } else {
+      drop.classList.add('lleno');
+      t.textContent = fotos.length >= MAX_FOTOS
+        ? 'Listo — 3 de 3 imágenes'
+        : `${fotos.length} imagen${fotos.length > 1 ? 'es' : ''} · podés sumar otra`;
+    }
+  }
+
+  async function subirFotos() {
+    const urls = [];
+    for (const f of fotos) {
+      const nombreArch = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}.jpg`;
+      const r = await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${nombreArch}`, {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'image/jpeg' },
+        body: f.blob
+      });
+      if (r.ok) urls.push(`${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${nombreArch}`);
+    }
+    return urls;
+  }
 
   function setStars(n) {
     starsSelected = n;
@@ -153,6 +258,11 @@
 
     const btn = document.getElementById('btnEnviar');
     btn.disabled = true;
+    btn.textContent = fotos.length ? 'Subiendo imágenes...' : 'Enviando...';
+
+    let urlsFotos = [];
+    try { urlsFotos = await subirFotos(); } catch(e) { urlsFotos = []; }
+
     btn.textContent = 'Enviando...';
 
     const resena = {
@@ -161,7 +271,8 @@
       texto: document.getElementById('r_resena').value.trim() || null,
       estrellas: starsSelected,
       fecha: new Date().toLocaleDateString('es-AR', { year:'numeric', month:'long', day:'numeric' }),
-      publica: false
+      publica: false,
+      fotos: urlsFotos
     };
 
     try {
@@ -182,6 +293,9 @@
         document.getElementById('r_nombre').disabled = true;
         document.getElementById('r_lugar').disabled = true;
         document.getElementById('r_resena').disabled = true;
+        const drop = document.getElementById('fotoDrop');
+        drop.onclick = null; drop.style.cursor = 'default'; drop.style.opacity = '0.5';
+        document.querySelectorAll('.foto-x').forEach(b => b.remove());
         document.getElementById('confirmacionEnvio').classList.add('visible');
         document.getElementById('confirmacionEnvio').scrollIntoView({ behavior:'smooth', block:'center' });
       } else {
